@@ -76,7 +76,7 @@ class ShowOff
                 if (data.slide != slidenum){
                   gotoSlide(data.slide);
                 }
-                if (data.incr) {
+                if (typeof data.incr != 'undefined') {
                   while(incrCurr <= data.incr) {
                     showIncremental(incrCurr);
                     incrCurr++;
