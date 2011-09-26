@@ -1,4 +1,4 @@
-var setupPusher = function(){
+function setupPusher(){
   var presenter = /presenter=([^&]*)/.exec(window.location.search),
       sekret    = presenter && presenter[1];
 
@@ -38,7 +38,7 @@ var setupPusher = function(){
   }
 }
 
-var checkForPusher = function() {
+function checkForPusher() {
   setTimeout(function(){
     if (typeof Pusher != 'undefined') {
       setupPusher();
