@@ -15,12 +15,6 @@ function setupPusher(){
     });
 
   } else {
-
-    // Enable pusher logging - don't include this in production
-    Pusher.log = function(message) {
-      if (window.console && window.console.log) window.console.log(message);
-    };
-
     new Pusher('<%= ShowOff::Pusher.socket %>')
       .subscribe('presenter')
       .bind('slide_change', function(data) {
