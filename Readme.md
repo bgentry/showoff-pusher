@@ -46,8 +46,13 @@ heroku config:add SHOWOFF_SECRET='some_super_secret_key'
 
 ## Usage
 
-In your browser, visit the following URL:
+In your browser, visit the following URL to control the presentation:
 
 `http://myapp.herokuapp.com/presenter?presenter=SHOWOFF_SECRET`
 
-By default, `SHOWOFF_SECRET` is `PleaseChangeMe`
+By default, `SHOWOFF_SECRET` is `PleaseChangeMe`.
+
+Your users will be able to follow along with the presentation by visiting `http://myapp.herokuapp.com/`
+
+## Notes
+Adapted from lmarburger's gist: https://gist.github.com/1180118
