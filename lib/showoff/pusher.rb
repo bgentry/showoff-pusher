@@ -9,28 +9,41 @@ class ShowOff
     def initialize(app)
       @app            = app
       @secret         = ENV['SHOWOFF_SECRET'] || 'PleaseChangeMe'
-      @pusher_uri     = URI.parse(ENV['PUSHER_URL'])
-      Pusher.app_id   = @pusher_uri.path.split('/').last
-      Pusher.key      = @pusher_uri.user
-      Pusher.secret   = @pusher_uri.password
+      if ENV['PUSHER_URL']
+        @pusher_uri     = URI.parse(ENV['PUSHER_URL'])
+        Pusher.app_id   = @pusher_uri.path.split('/').last
+        Pusher.key      = @pusher_uri.user
+        Pusher.secret   = @pusher_uri.password
+      else
+        log_disabled
+      end
     end
 
     def call(env)
       req = Rack::Request.new(env)
 
-      if req.path == '/slide'
-        if req.params['sekret'] == @secret
-          Pusher['presenter'].trigger('slide_change', {
-            'slide' => req.params['num']
-          })
-        end
+      if ENV['PUSHER_URL']
+        if req.path == '/slide'
+          if req.params['sekret'] == @secret
+            Pusher['presenter'].trigger('slide_change', {
+              'slide' => req.params['num']
+            })
+          end
 
-        [ 204, {}, [] ]
-      elsif req.path == '/javascripts/pusher.js'
-        [200, {}, pusher_js]
+          [ 204, {}, [] ]
+        elsif req.path == '/javascripts/pusher.js'
+          [200, {}, pusher_js]
+        else
+          @app.call env
+        end
       else
+        log_disabled
         @app.call env
       end
+    end
+
+    def log_disabled
+      puts "PUSHER_URL is not defined. ShowOff::Pusher is disabled."
     end
 
     def pusher_js
@@ -66,6 +79,8 @@ class ShowOff
 
     def self.socket
       @pusher_socket  ||= URI.parse(ENV['PUSHER_SOCKET_URL']).split('/').last
+    rescue
+      ''
     end
   end
 end
