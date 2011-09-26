@@ -26,7 +26,11 @@ function setupPusher(){
       .bind('slide_change', function(data) {
         Pusher.log('slide_change', data.slide);
         if (data.slide != slidenum){
-          gotoSlide(data.slide);
+          if (data.slide == (slidenum - 1)) {
+            gotoSlideBack(data.slide);
+          } else {
+            gotoSlide(data.slide);
+          }
         }
         if (typeof data.incr != 'undefined') {
           while(incrCurr <= data.incr) {
@@ -35,6 +39,13 @@ function setupPusher(){
           }
         }
       });
+  }
+}
+
+function gotoSlideBack(slideNum) {
+  slidenum = parseInt(slideNum)
+  if (!isNaN(slidenum)) {
+    showSlide(true)
   }
 }
 
