@@ -4,8 +4,6 @@ require 'uri'
 
 class ShowOff
   class Pusher
-    VERSION = "0.0.1"
-
     def initialize(app)
       @app            = app
       @secret         = ENV['SHOWOFF_SECRET'] || 'PleaseChangeMe'
