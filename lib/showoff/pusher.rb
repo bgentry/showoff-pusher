@@ -73,7 +73,9 @@ class ShowOff
               .subscribe('presenter')
               .bind('slide_change', function(data) {
                 Pusher.log('slide_change', data.slide);
-                gotoSlide(data.slide);
+                if (data.slide != slidenum){
+                  gotoSlide(data.slide);
+                }
                 if (data.incr) {
                   while(incrCurr <= data.incr) {
                     showIncremental(incrCurr);
