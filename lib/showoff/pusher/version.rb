@@ -1,5 +1,1 @@
-class ShowOff
-  class Pusher
-    VERSION = "0.0.1"
-  end
-end
+SHOWOFF_PUSHER_VERSION = "0.0.1"

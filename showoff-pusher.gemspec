@@ -4,7 +4,7 @@ require 'showoff/pusher/version'
 
 Gem::Specification.new do |s|
   s.name        = "showoff-pusher"
-  s.version     = ShowOff::Pusher::VERSION.dup
+  s.version     = SHOWOFF_PUSHER_VERSION
   s.platform    = Gem::Platform::RUBY
   s.summary     = "Use Pusher to drive your Showoff presentations on remote machines."
   s.email       = "blakesgentry@gmail.com"
