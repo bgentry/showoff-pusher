@@ -23,9 +23,9 @@ class ShowOff
       if ENV['PUSHER_URL']
         if req.path == '/slide'
           if req.params['sekret'] == @secret
-            ::Pusher['presenter'].trigger('slide_change', {
-              'slide' => req.params['num']
-            })
+            params = { 'slide' => req.params['num'] }
+            params['incr'] = req.params['incr'] if req.params['incr']
+            ::Pusher['presenter'].trigger('slide_change', params)
           end
 
           [ 204, {}, [] ]
@@ -56,6 +56,10 @@ class ShowOff
                 console.debug("EVENT: " + slidenum);
                 $.post('/slide', { sekret: sekret, num: slidenum });
               });
+              $('body').bind('showoff:incr', function(e) {
+                console.debug("INCREMENT: " + e.slidenum + ' ' + e.incr);
+                $.post('/slide', { sekret: sekret, num: slidenum, incr: e.incr });
+              });
             });
 
           } else {
@@ -70,6 +74,12 @@ class ShowOff
               .bind('slide_change', function(data) {
                 Pusher.log('slide_change', data.slide);
                 gotoSlide(data.slide);
+                if (data.incr) {
+                  while(incrCurr < data.incr) {
+                    showIncremental(incrCurr);
+                    incrCurr++;
+                  }
+                }
               });
           }
         }
