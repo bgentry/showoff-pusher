@@ -11,9 +11,9 @@ class ShowOff
       @secret         = ENV['SHOWOFF_SECRET'] || 'PleaseChangeMe'
       if ENV['PUSHER_URL']
         @pusher_uri     = URI.parse(ENV['PUSHER_URL'])
-        Pusher.app_id   = @pusher_uri.path.split('/').last
-        Pusher.key      = @pusher_uri.user
-        Pusher.secret   = @pusher_uri.password
+        ::Pusher.app_id   = @pusher_uri.path.split('/').last
+        ::Pusher.key      = @pusher_uri.user
+        ::Pusher.secret   = @pusher_uri.password
       else
         log_disabled
       end
@@ -25,7 +25,7 @@ class ShowOff
       if ENV['PUSHER_URL']
         if req.path == '/slide'
           if req.params['sekret'] == @secret
-            Pusher['presenter'].trigger('slide_change', {
+            ::Pusher['presenter'].trigger('slide_change', {
               'slide' => req.params['num']
             })
           end
