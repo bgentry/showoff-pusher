@@ -30,7 +30,7 @@ class ShowOff
 
           [ 204, {}, [] ]
         elsif req.path == '/javascripts/pusher.js'
-          [200, {}, pusher_js]
+          [200, {'Content-Type' => 'application/javascript'}, pusher_js]
         else
           @app.call env
         end
@@ -46,38 +46,50 @@ class ShowOff
 
     def pusher_js
       <<-JS
-        document.write(unescape('%3Cscript src="http://js.pusherapp.com/1.9/pusher.min.js"%3E%3C/script%3E'))
+        var setupPusher = function(){
+          var presenter = /presenter=([^&]*)/.exec(window.location.search),
+              sekret    = presenter && presenter[1];
 
-        var presenter = /presenter=(.*)/.exec(window.location.search),
-            sekret    = presenter && presenter[1];
-
-        if (sekret) {
-          $(function() {
-            $('body').bind('showoff:show', function() {
-            $.post('/slide', { sekret: sekret, num: slidenum });
-          });
-        });
-
-        } else {
-
-          // Enable pusher logging - don't include this in production
-          Pusher.log = function(message) {
-            if (window.console && window.console.log) window.console.log(message);
-          };
-
-          new Pusher('#{ShowOff::Pusher.socket}')
-            .subscribe('presenter')
-            .bind('slide_change', function(data) {
-              Pusher.log('slide_change', data.slide);
-              gotoSlide(data.slide);
+          if (sekret) {
+            $(function() {
+              $('body').bind('showoff:show', function(e) {
+                console.debug("EVENT: " + slidenum);
+                $.post('/slide', { sekret: sekret, num: slidenum });
+              });
             });
+
+          } else {
+
+            // Enable pusher logging - don't include this in production
+            Pusher.log = function(message) {
+              if (window.console && window.console.log) window.console.log(message);
+            };
+
+            new Pusher('#{ShowOff::Pusher.socket}')
+              .subscribe('presenter')
+              .bind('slide_change', function(data) {
+                Pusher.log('slide_change', data.slide);
+                gotoSlide(data.slide);
+              });
+          }
         }
+        var checkForPusher = function() {
+          setTimeout(function(){
+            if (typeof Pusher != 'undefined') {
+              setupPusher();
+            } else {
+              checkForPusher()
+            }
+          }, 250);
+        }
+        checkForPusher();
       JS
     end
 
     def self.socket
-      @pusher_socket  ||= URI.parse(ENV['PUSHER_SOCKET_URL']).split('/').last
+      @pusher_socket  ||= URI.parse(ENV['PUSHER_SOCKET_URL']).path.split('/').last
     rescue
+      puts "Invalid PUSHER_SOCKET_URL"
       ''
     end
   end
