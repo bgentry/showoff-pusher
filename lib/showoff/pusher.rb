@@ -45,57 +45,8 @@ class ShowOff
     end
 
     def pusher_js
-      <<-JS
-        var setupPusher = function(){
-          var presenter = /presenter=([^&]*)/.exec(window.location.search),
-              sekret    = presenter && presenter[1];
-
-          if (sekret) {
-            $(function() {
-              $('body').bind('showoff:show', function(e) {
-                console.debug("EVENT: " + slidenum);
-                $.post('/slide', { sekret: sekret, num: slidenum });
-              });
-              $('body').bind('showoff:incr', function(e) {
-                console.debug("INCREMENT: " + e.slidenum + ' ' + e.incr);
-                $.post('/slide', { sekret: sekret, num: slidenum, incr: e.incr });
-              });
-            });
-
-          } else {
-
-            // Enable pusher logging - don't include this in production
-            Pusher.log = function(message) {
-              if (window.console && window.console.log) window.console.log(message);
-            };
-
-            new Pusher('#{ShowOff::Pusher.socket}')
-              .subscribe('presenter')
-              .bind('slide_change', function(data) {
-                Pusher.log('slide_change', data.slide);
-                if (data.slide != slidenum){
-                  gotoSlide(data.slide);
-                }
-                if (typeof data.incr != 'undefined') {
-                  while(incrCurr <= data.incr) {
-                    showIncremental(incrCurr);
-                    incrCurr++;
-                  }
-                }
-              });
-          }
-        }
-        var checkForPusher = function() {
-          setTimeout(function(){
-            if (typeof Pusher != 'undefined') {
-              setupPusher();
-            } else {
-              checkForPusher()
-            }
-          }, 250);
-        }
-        checkForPusher();
-      JS
+      @template ||= File.read(File.expand_path(File.join(File.dirname(__FILE__), '..', '..', 'views', 'pusher.js.erb')))
+      ERB.new(@template).result
     end
 
     def self.socket
