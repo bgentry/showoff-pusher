@@ -2,7 +2,7 @@ require 'showoff'
 require 'pusher'
 require 'uri'
 
-class ShowOff
+class ShowOff < Sinatra::Application
   class Pusher
     def initialize(app)
       @app            = app
