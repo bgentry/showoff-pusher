@@ -23,8 +23,8 @@ class ShowOff
       if ENV['PUSHER_URL']
         if req.path == '/slide'
           if req.params['sekret'] == @secret
-            params = { 'slide' => req.params['num'] }
-            params['incr'] = req.params['incr'] if req.params['incr']
+            params = { 'slide' => req.params['num'].to_i }
+            params['incr'] = req.params['incr'].to_i if req.params['incr']
             ::Pusher['presenter'].trigger('slide_change', params)
           end
 
@@ -75,7 +75,7 @@ class ShowOff
                 Pusher.log('slide_change', data.slide);
                 gotoSlide(data.slide);
                 if (data.incr) {
-                  while(incrCurr < data.incr) {
+                  while(incrCurr <= data.incr) {
                     showIncremental(incrCurr);
                     incrCurr++;
                   }
