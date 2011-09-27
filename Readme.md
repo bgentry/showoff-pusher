@@ -1,4 +1,4 @@
-Remotely drive your ShowOff presentation on remote users' terminals.
+Use Pusher to remotely drive your ShowOff presentation on remote users' browsers.
 
 ## Setup
 This gem is preconfigured to use the Heroku addon format for Pusher configs. These instructions assume you've already set up your ShowOff presentation for Heroku (`showoff heroku`).
